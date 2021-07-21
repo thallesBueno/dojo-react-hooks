@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Announcements from './announcements';
 import Api from './api';
 import './App.css';
@@ -8,15 +8,15 @@ const App = () => {
   const [apiCalls, setApiCalls] = useState(0);
   const [announcements, setAnnouncements] = useState([]);
 
-  const searchAnnouncementsCalbback = useCallback(async () => {
+  const loadAnnouncements = async (text) => {
     setApiCalls((oldApiCalls) => oldApiCalls + 1);
-    const data = await Api.searchAnnouncements(searchText);
+    const data = await Api.searchAnnouncements(text);
     setAnnouncements(data);
-  }, [searchText]);
+  };
 
   useEffect(() => {
-    searchAnnouncementsCalbback();
-  }, [searchAnnouncementsCalbback]);
+    loadAnnouncements(searchText);
+  }, [searchText]);
 
   return (
     <div className="App">

@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import { useCallback, useEffect, useState } from 'react';
+import Announcements from './announcements';
+import Api from './api';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [searchText, setSearchText] = useState('');
+  const [apiCalls, setApiCalls] = useState(0);
+  const [announcements, setAnnouncements] = useState([]);
+
+  const searchAnnouncementsCalbback = useCallback(async () => {
+    setApiCalls((oldApiCalls) => oldApiCalls + 1);
+    const data = await Api.searchAnnouncements(searchText);
+    setAnnouncements(data);
+  }, [searchText]);
+
+  useEffect(() => {
+    searchAnnouncementsCalbback();
+  }, [searchAnnouncementsCalbback]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="inputContainer">
+        <h1 className="title">Dojo - React Hooks</h1>
+        <input
+          className="input"
+          placeholder="Pesquise ..."
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+        />
+        <p>chamadas na API: {apiCalls}</p>
+      </div>
+      <Announcements announcements={announcements} />
     </div>
   );
 }

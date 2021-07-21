@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Announcements from './announcements';
 import Api from './api';
 import './App.css';
@@ -8,6 +8,8 @@ const App = () => {
   const [apiCalls, setApiCalls] = useState(0);
   const [announcements, setAnnouncements] = useState([]);
 
+  const timeoutRef = useRef();
+
   const loadAnnouncements = async (text) => {
     setApiCalls((oldApiCalls) => oldApiCalls + 1);
     const data = await Api.searchAnnouncements(text);
@@ -15,7 +17,15 @@ const App = () => {
   };
 
   useEffect(() => {
-    loadAnnouncements(searchText);
+    if(timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      loadAnnouncements(searchText);
+      timeoutRef.current = null;
+    }, 200);
+    
   }, [searchText]);
 
   return (
